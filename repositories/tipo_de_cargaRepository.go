@@ -14,7 +14,9 @@ func NewTipoDeCargaRepository(db *sql.DB) *TipoDeCargaRepository {
 }
 
 func (repository *TipoDeCargaRepository) GetAllTiposDeCarga() ([]models.TipoCarga, error) {
-	rows, err := repository.db.Query("select * from aplic2008.tipo_carga_aplic")
+	rows, err := repository.db.Query("SELECT ca_descricao\n " +
+		"FROM aplic2008.cargas_aplic\n" +
+		"WHERE ca_codigo IN ('CT', 'FP', 'PA', 'CC')")
 	if err != nil {
 		return nil, err
 	}
@@ -29,5 +31,4 @@ func (repository *TipoDeCargaRepository) GetAllTiposDeCarga() ([]models.TipoCarg
 		tipoCargas = append(tipoCargas, tipoCarga)
 	}
 	return tipoCargas, nil
-	
 }
