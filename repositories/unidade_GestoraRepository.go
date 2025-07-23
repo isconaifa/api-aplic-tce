@@ -12,12 +12,15 @@ type UnidadeGestoraRepository struct {
 func NewUnidadeGestoraRepository(db *sql.DB) *UnidadeGestoraRepository {
 	return &UnidadeGestoraRepository{db: db}
 }
-func (repository *UnidadeGestoraRepository) GetAllUnidadesGestoras() ([]models.UnidadeGestora, error) {
-	rows, err := repository.db.Query(" select distinct v.ent_codigo as codigo,\n" +
-		"v.ent_nome as nome\n " +
-		"from vw_entidade_aplic v\n " +
-		"where v.mun_codigo = '510665'\n " +
-		"order by v.ent_nome")
+
+func (repository *UnidadeGestoraRepository) GetUnidadesGestorasPorMunicipio(munCodigo string) ([]models.UnidadeGestora, error) {
+	query := "SELECT DISTINCT v.ent_codigo AS codigo,\n" +
+		" v.ent_nome   AS nome\n" +
+		" FROM vw_entidade_aplic v\n" +
+		" WHERE v.mun_codigo = :1\n" +
+		" ORDER BY v.ent_nome"
+
+	rows, err := repository.db.Query(query, munCodigo)
 	if err != nil {
 		return nil, err
 	}

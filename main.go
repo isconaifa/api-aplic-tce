@@ -17,6 +17,7 @@ func main() {
 		panic(err)
 	}
 	route.Use(middlewares.LoggingMiddleware)
+	route.Use(middlewares.EnableCors)
 	fmt.Printf("Server is running on port %d\n", configs.Porta)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", configs.Porta), route))
 }

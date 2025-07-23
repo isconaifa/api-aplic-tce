@@ -17,6 +17,12 @@ func NewMunicipioController(repository *repositories.MunicipioRepository) *Munic
 
 func (controller *MunicipioController) GetMunicipios(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+
+	anoExercicio := r.URL.Query().Get("anoExercicio")
+	if anoExercicio == "" {
+		http.Error(w, "Parâmetro 'anoExercicio' é obrigatório", http.StatusBadRequest)
+		return
+	}
 	db, err := database.Connectdb()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -24,7 +30,7 @@ func (controller *MunicipioController) GetMunicipios(w http.ResponseWriter, r *h
 		return
 	}
 	municipiosRepository := repositories.NewMunicipioRepository(db)
-	municipios, err := municipiosRepository.GetAllMunicipios()
+	municipios, err := municipiosRepository.GetAllMunicipios(anoExercicio)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))

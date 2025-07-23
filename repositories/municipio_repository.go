@@ -13,16 +13,18 @@ func NewMunicipioRepository(db *sql.DB) *MunicipioRepository {
 	return &MunicipioRepository{db: db}
 }
 
-func (repository *MunicipioRepository) GetAllMunicipios() ([]models.Municipio, error) {
-	rows, err := repository.db.Query("select distinct v.mun_codigo as codigo,\n" +
+func (repository *MunicipioRepository) GetAllMunicipios(exercicio string) ([]models.Municipio, error) {
+	query := "select distinct v.mun_codigo as codigo,\n" +
 		"v.mun_nome as nome\n" +
 		" from publico.distribuicao_relator d,\n" +
 		"controlp.conselheiro  c,\n" +
 		"vw_entidade_aplic v\n " +
-		"where d.ano_relatoria = '2025'\n " +
+		"where d.ano_relatoria = :1\n" +
 		"and d.cod_conselheiro = c.cod_conselheiro\n" +
 		"and d.cnpj_cpf_cod_tce_entidade = v.ent_codigo\n " +
-		"order by v.mun_nome")
+		"order by v.mun_nome"
+
+	rows, err := repository.db.Query(query, exercicio)
 	if err != nil {
 		return nil, err
 	}
