@@ -23,7 +23,6 @@ func (repository *MunicipioRepository) GetAllMunicipios(exercicio string) ([]mod
 		"and d.cod_conselheiro = c.cod_conselheiro\n" +
 		"and d.cnpj_cpf_cod_tce_entidade = v.ent_codigo\n " +
 		"order by v.mun_nome"
-
 	rows, err := repository.db.Query(query, exercicio)
 	if err != nil {
 		return nil, err
