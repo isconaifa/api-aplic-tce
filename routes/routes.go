@@ -37,6 +37,10 @@ func SetupRoutes() (*mux.Router, error) {
 	unidadesGestorasRepository := repositories.NewUnidadeGestoraRepository(db)
 	unidadesGestorasController := controllers.NewUnidadeGestoraController(unidadesGestorasRepository)
 
+	// request de  consultas de empenhos
+	consultaEmpenhoRepository := repositories.NewConsultaEmpenhoRepository(db)
+	consultaEmpenhoController := controllers.NewConsultaEmpenhoController(consultaEmpenhoRepository)
+
 	r := mux.NewRouter()
 	r.HandleFunc("/aplic/exercicios", excontroller.GetExercicios).Methods("GET")
 	r.HandleFunc("/aplic/competencias", competcontroller.GetCompetencias).Methods("GET")
@@ -44,5 +48,6 @@ func SetupRoutes() (*mux.Router, error) {
 	r.HandleFunc("/aplic/conselheiros", conseelController.GetConselheiros).Methods("GET")
 	r.HandleFunc("/aplic/municipios", municipiosController.GetMunicipios).Methods("GET")
 	r.HandleFunc("/aplic/unidades-gestoras", unidadesGestorasController.GetUnidadesGestoras).Methods("GET")
+	r.HandleFunc("/aplic/consultas-empenhos", consultaEmpenhoController.GetAllConsultaEmpenhos).Methods("GET")
 	return r, nil
 }
