@@ -29,10 +29,12 @@ func (controller *ConsultaEmpenhoController) GetAllConsultaEmpenhos(w http.Respo
 	db, err := database.Connectdb()
 	consultaEmpenhoRepository := repositories.NewConsultaEmpenhoRepository(db)
 	consultaEmpenhos, err := consultaEmpenhoRepository.GetAllConsultaEmpenhos(unidadeGestoraCodigo, ano)
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	jsonConsultaEmpenhos, err := json.Marshal(consultaEmpenhos)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
