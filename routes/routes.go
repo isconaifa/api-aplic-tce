@@ -61,6 +61,18 @@ func SetupRoutes() (*mux.Router, error) {
 	acaoRepository := repositories.NewAcaoRepository(db)
 	acaoController := controllers.NewAcaoController(acaoRepository)
 
+	// request de subfuncoes
+	subFuncaoRepository := repositories.NewSubFuncaoRepository(db)
+	subFuncaoController := controllers.NewSubFuncaoController(subFuncaoRepository)
+
+	// request de detalhe fonte
+	detalheFonteRepository := repositories.NewDetalhefonteRepository(db)
+	detalheFonteController := controllers.NewDetalheFonteController(detalheFonteRepository)
+
+	// request de grupos de fonte
+	grupoFonteRepository := repositories.NewGrupoFonteRepository(db)
+	grupoFonteController := controllers.NewGrupoFonteController(grupoFonteRepository)
+
 	r := mux.NewRouter()
 	r.HandleFunc("/aplic/exercicios", excontroller.GetExercicios).Methods("GET")
 	r.HandleFunc("/aplic/competencias", competcontroller.GetCompetencias).Methods("GET")
@@ -74,5 +86,8 @@ func SetupRoutes() (*mux.Router, error) {
 	r.HandleFunc("/aplic/funcoes", funcoesController.GetFuncoes).Methods("GET")
 	r.HandleFunc("/aplic/fontes-destinacao-recurso", fonteDestinacaoRecursoController.GetFontesDestinacaoRecurso).Methods("GET")
 	r.HandleFunc("/aplic/acoes", acaoController.GetAllAcoes).Methods("GET")
+	r.HandleFunc("/aplic/subfuncoes", subFuncaoController.GetAllSubFuncoes).Methods("GET")
+	r.HandleFunc("/aplic/detalhe-fonte", detalheFonteController.GetAllDetalheFonte).Methods("GET")
+	r.HandleFunc("/aplic/grupo-fonte", grupoFonteController.GetAllGruposFonte).Methods("GET")
 	return r, nil
 }
