@@ -73,6 +73,14 @@ func SetupRoutes() (*mux.Router, error) {
 	grupoFonteRepository := repositories.NewGrupoFonteRepository(db)
 	grupoFonteController := controllers.NewGrupoFonteController(grupoFonteRepository)
 
+	// request de unidades orcamentarias
+	unidadeOrcamentariaRepository := repositories.NewUnidadeOrcamentariaRepository(db)
+	unidadeOrcamentariaController := controllers.NewUnidadeOrcamentariaController(unidadeOrcamentariaRepository)
+
+	// request de programa
+	programaRepository := repositories.NewProgramaRepository(db)
+	programaController := controllers.NewProgramaController(programaRepository)
+
 	r := mux.NewRouter()
 	r.HandleFunc("/aplic/exercicios", excontroller.GetExercicios).Methods("GET")
 	r.HandleFunc("/aplic/competencias", competcontroller.GetCompetencias).Methods("GET")
@@ -89,5 +97,7 @@ func SetupRoutes() (*mux.Router, error) {
 	r.HandleFunc("/aplic/subfuncoes", subFuncaoController.GetAllSubFuncoes).Methods("GET")
 	r.HandleFunc("/aplic/detalhe-fonte", detalheFonteController.GetAllDetalheFonte).Methods("GET")
 	r.HandleFunc("/aplic/grupo-fonte", grupoFonteController.GetAllGruposFonte).Methods("GET")
+	r.HandleFunc("/aplic/unidades-orcamentarias", unidadeOrcamentariaController.GetAllUnidadeOrcamentaria).Methods("GET")
+	r.HandleFunc("/aplic/programas", programaController.GetAllProgramas).Methods("GET")
 	return r, nil
 }
