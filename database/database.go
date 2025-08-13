@@ -3,6 +3,7 @@ package database
 import (
 	"api-aplic-web/configs"
 	"database/sql"
+	"fmt"
 	_ "github.com/sijms/go-ora/v2"
 	"log"
 )
@@ -13,6 +14,7 @@ func Connectdb() (*sql.DB, error) {
 		return nil, err
 	}
 	if err = db.Ping(); err != nil {
+		fmt.Println(err)
 		log.Fatal("Error to connect database")
 		return nil, err
 	}

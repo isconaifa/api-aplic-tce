@@ -26,6 +26,7 @@ func (repository *OrgaoRepository) GetAllOrgaos(unidadeGestora, exercicio string
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 	var orgaos []models.Orgao
 	for rows.Next() {
 		var orgao models.Orgao
