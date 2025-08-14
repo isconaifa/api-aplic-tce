@@ -22,8 +22,8 @@ func (acaoController *AcaoController) GetAllAcoes(w http.ResponseWriter, r *http
 		http.Error(w, "Parâmetro 'unidadeGestoraCodigo' é obrigatório", http.StatusBadRequest)
 		return
 	}
-	exercicio := r.URL.Query().Get("exercicio")
-	if exercicio == "" {
+	ano := r.URL.Query().Get("ano")
+	if ano == "" {
 		http.Error(w, "Parâmetro 'exercicio' é obrigatório", http.StatusBadRequest)
 		return
 	}
@@ -35,7 +35,7 @@ func (acaoController *AcaoController) GetAllAcoes(w http.ResponseWriter, r *http
 	}
 	defer db.Close()
 	acoesRepository := repositories.NewAcaoRepository(db)
-	acoes, err := acoesRepository.GetAllAcoes(unidadeGestoraCodigo, exercicio)
+	acoes, err := acoesRepository.GetAllAcoes(unidadeGestoraCodigo, ano)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))

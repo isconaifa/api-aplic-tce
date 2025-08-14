@@ -22,8 +22,8 @@ func (controller *FuncaoController) GetFuncoes(w http.ResponseWriter, r *http.Re
 		http.Error(w, "Parâmetro 'unidadeGestoraCodigo' é obrigatório", http.StatusBadRequest)
 		return
 	}
-	exercicio := r.URL.Query().Get("exercicio")
-	if exercicio == "" {
+	ano := r.URL.Query().Get("ano")
+	if ano == "" {
 		http.Error(w, "Parâmetro 'exercicio' é obrigatório", http.StatusBadRequest)
 		return
 	}
@@ -34,7 +34,7 @@ func (controller *FuncaoController) GetFuncoes(w http.ResponseWriter, r *http.Re
 		return
 	}
 	funcoesRepository := repositories.NewFuncaoRepository(db)
-	funcoes, err := funcoesRepository.GetAllFuncoes(unidadeGestoraCodigo, exercicio)
+	funcoes, err := funcoesRepository.GetAllFuncoes(unidadeGestoraCodigo, ano)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))

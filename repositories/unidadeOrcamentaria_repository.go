@@ -13,7 +13,7 @@ func NewUnidadeOrcamentariaRepository(db *sql.DB) *UnidadeOrcamentariaRepository
 	return &UnidadeOrcamentariaRepository{db: db}
 }
 
-func (repository *UnidadeOrcamentariaRepository) GetAllUnidadeOrcamentaria(unidadeGestora, exercicio, codigoOrgao string) ([]models.UnidadeOrcamentaria, error) {
+func (repository *UnidadeOrcamentariaRepository) GetAllUnidadeOrcamentaria(unidadeGestoraCodigo, ano, codigoOrgao string) ([]models.UnidadeOrcamentaria, error) {
 	query := "select distinct u.unor_codigo, u.unor_nome\n" +
 		"from aplic2008.empenho e, aplic2008.unidade_orcamentaria u\n" +
 		"where e.unor_codigo = u.unor_codigo\n" +
@@ -25,7 +25,7 @@ func (repository *UnidadeOrcamentariaRepository) GetAllUnidadeOrcamentaria(unida
 		"and e.org_codigo = :3\n" +
 		"order by u.unor_nome"
 
-	rows, err := repository.db.Query(query, unidadeGestora, exercicio, codigoOrgao)
+	rows, err := repository.db.Query(query, unidadeGestoraCodigo, ano, codigoOrgao)
 	if err != nil {
 		return nil, err
 	}

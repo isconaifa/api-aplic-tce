@@ -13,12 +13,12 @@ func NewGrupoFonteRepository(db *sql.DB) *GrupoFonteRepository {
 	return &GrupoFonteRepository{db: db}
 }
 
-func (r *GrupoFonteRepository) GetAllGruposFonte(exercicio string) ([]models.GrupoFonte, error) {
+func (r *GrupoFonteRepository) GetAllGruposFonte(ano string) ([]models.GrupoFonte, error) {
 	query := "select d.drgrp_codigo, d.drgrp_descricao\n" +
 		"from aplic2008.destinacao_recurso_grupo d\n" +
 		"where d.exercicio = :1\n"
 
-	rows, err := r.db.Query(query, exercicio)
+	rows, err := r.db.Query(query, ano)
 	if err != nil {
 		return nil, err
 	}

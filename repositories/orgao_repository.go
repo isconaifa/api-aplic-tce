@@ -13,7 +13,7 @@ func NewOrgaoRepository(db *sql.DB) *OrgaoRepository {
 	return &OrgaoRepository{db: db}
 }
 
-func (repository *OrgaoRepository) GetAllOrgaos(unidadeGestora, exercicio string) ([]models.Orgao, error) {
+func (repository *OrgaoRepository) GetAllOrgaos(unidadeGestoraCodigo, ano string) ([]models.Orgao, error) {
 	query := "select distinct o.org_codigo, o.org_nome\n" +
 		"from aplic2008.empenho e, aplic2008.orgao o\n" +
 		"where e.org_codigo = o.org_codigo\n" +
@@ -22,7 +22,7 @@ func (repository *OrgaoRepository) GetAllOrgaos(unidadeGestora, exercicio string
 		"and e.Ent_Codigo = :1\n" +
 		"and e.Exercicio = :2\n" +
 		"order by o.org_nome"
-	rows, err := repository.db.Query(query, unidadeGestora, exercicio)
+	rows, err := repository.db.Query(query, unidadeGestoraCodigo, ano)
 	if err != nil {
 		return nil, err
 	}

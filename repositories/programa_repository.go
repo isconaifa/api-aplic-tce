@@ -13,7 +13,7 @@ func NewProgramaRepository(db *sql.DB) *ProgramaRepository {
 	return &ProgramaRepository{db: db}
 }
 
-func (repository *ProgramaRepository) GetAllProgramas(unidadeGestora, exercicio string, codigoFuncao int) ([]models.Programa, error) {
+func (repository *ProgramaRepository) GetAllProgramas(unidadeGestoraCodigo, ano string, codigoFuncao int) ([]models.Programa, error) {
 	query := "select distinct p.prg_codigo, p.prg_descricao\n" +
 		"from aplic2008.empenho e, aplic2008.Programa p\n" +
 		"where e.prg_codigo = p.prg_codigo\n" +
@@ -24,7 +24,7 @@ func (repository *ProgramaRepository) GetAllProgramas(unidadeGestora, exercicio 
 		"and e.fn_Codigo = :3\n" +
 		"order by p.prg_descricao"
 
-	rows, err := repository.db.Query(query, unidadeGestora, exercicio, codigoFuncao)
+	rows, err := repository.db.Query(query, unidadeGestoraCodigo, ano, codigoFuncao)
 	if err != nil {
 		return nil, err
 	}

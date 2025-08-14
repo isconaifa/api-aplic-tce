@@ -23,8 +23,8 @@ func (controller *FonteDestinacaoRecursoController) GetFontesDestinacaoRecurso(w
 		http.Error(w, "Parâmetro 'unidadeGestoraCodigo' é obrigatório", http.StatusBadRequest)
 		return
 	}
-	exercicio := r.URL.Query().Get("exercicio")
-	if exercicio == "" {
+	ano := r.URL.Query().Get("ano")
+	if ano == "" {
 		http.Error(w, "Parâmetro 'exercicio' é obrigatório", http.StatusBadRequest)
 		return
 	}
@@ -35,7 +35,7 @@ func (controller *FonteDestinacaoRecursoController) GetFontesDestinacaoRecurso(w
 		return
 	}
 	fontesDestinacaoRecursoRepository := repositories.NewFonteDestinacaoRecursoRepository(db)
-	fontesDestinacaoRecurso, err := fontesDestinacaoRecursoRepository.GetAllFontesDestinacaoRecurso(unidadeGestoraCodigo, exercicio)
+	fontesDestinacaoRecurso, err := fontesDestinacaoRecursoRepository.GetAllFontesDestinacaoRecurso(unidadeGestoraCodigo, ano)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))

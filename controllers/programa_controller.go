@@ -19,13 +19,13 @@ func NewProgramaController(repository *repositories.ProgramaRepository) *Program
 func (controller *ProgramaController) GetAllProgramas(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	unidadeGestora := r.URL.Query().Get("unidadeGestora")
-	if unidadeGestora == "" {
+	unidadeGestoraCodigo := r.URL.Query().Get("unidadeGestoraCodigo")
+	if unidadeGestoraCodigo == "" {
 		http.Error(w, "Parâmetro 'unidadeGestora' é obrigatório", http.StatusBadRequest)
 		return
 	}
-	exercicio := r.URL.Query().Get("exercicio")
-	if exercicio == "" {
+	ano := r.URL.Query().Get("ano")
+	if ano == "" {
 		http.Error(w, "Parâmetro 'exercicio' é obrigatório", http.StatusBadRequest)
 		return
 	}
@@ -41,7 +41,7 @@ func (controller *ProgramaController) GetAllProgramas(w http.ResponseWriter, r *
 	}
 	defer db.Close()
 	programaRepository := repositories.NewProgramaRepository(db)
-	programas, err := programaRepository.GetAllProgramas(unidadeGestora, exercicio, codigoFuncao)
+	programas, err := programaRepository.GetAllProgramas(unidadeGestoraCodigo, ano, codigoFuncao)
 	if err != nil {
 		http.Error(w, "Erro ao buscar programas", http.StatusInternalServerError)
 		return

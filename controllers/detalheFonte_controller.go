@@ -16,8 +16,8 @@ func NewDetalheFonteController(repository *repositories.DetalhefonteRepository) 
 }
 func (controller *DetalheFonteController) GetAllDetalheFonte(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	exercicio := r.URL.Query().Get("exercicio")
-	if exercicio == "" {
+	ano := r.URL.Query().Get("ano")
+	if ano == "" {
 		http.Error(w, "Parâmetro 'exercicio' é obrigatório", http.StatusBadRequest)
 		return
 	}
@@ -28,7 +28,7 @@ func (controller *DetalheFonteController) GetAllDetalheFonte(w http.ResponseWrit
 	}
 	defer db.Close()
 	detalheFonteRepository := repositories.NewDetalhefonteRepository(db)
-	detalheFonte, err := detalheFonteRepository.GetAllDetalhefonte(exercicio)
+	detalheFonte, err := detalheFonteRepository.GetAllDetalhefonte(ano)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))

@@ -13,7 +13,7 @@ func NewAcaoRepository(db *sql.DB) *AcaoRepository {
 	return &AcaoRepository{db: db}
 }
 
-func (acaoRepository *AcaoRepository) GetAllAcoes(unidadeGestora, exercicio string) ([]models.Acao, error) {
+func (acaoRepository *AcaoRepository) GetAllAcoes(unidadeGestoraCodigo, ano string) ([]models.Acao, error) {
 	query := "select distinct p.prat_numero,\n" +
 		"upper(p.prat_descricao) as prat_descricao\n" +
 		" from aplic2008.empenho e,\n" +
@@ -26,7 +26,7 @@ func (acaoRepository *AcaoRepository) GetAllAcoes(unidadeGestora, exercicio stri
 		" and e.Exercicio = :2\n" +
 		" order by prat_descricao"
 
-	rows, err := acaoRepository.db.Query(query, unidadeGestora, exercicio)
+	rows, err := acaoRepository.db.Query(query, unidadeGestoraCodigo, ano)
 	if err != nil {
 		return nil, err
 	}

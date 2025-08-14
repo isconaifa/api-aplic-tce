@@ -17,8 +17,8 @@ func NewGrupoFonteController(repository *repositories.GrupoFonteRepository) *Gru
 
 func (controller *GrupoFonteController) GetAllGruposFonte(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	exercicio := r.URL.Query().Get("exercicio")
-	if exercicio == "" {
+	ano := r.URL.Query().Get("ano")
+	if ano == "" {
 		http.Error(w, "Parâmetro 'exercicio' é obrigatório", http.StatusBadRequest)
 		return
 	}
@@ -29,7 +29,7 @@ func (controller *GrupoFonteController) GetAllGruposFonte(w http.ResponseWriter,
 	}
 	defer db.Close()
 	gruposFonteRepository := repositories.NewGrupoFonteRepository(db)
-	gruposFonte, err := gruposFonteRepository.GetAllGruposFonte(exercicio)
+	gruposFonte, err := gruposFonteRepository.GetAllGruposFonte(ano)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))

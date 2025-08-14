@@ -18,13 +18,13 @@ func NewSubFuncaoController(repository *repositories.SubFuncaoRepository) *SubFu
 
 func (controller *SubFuncaoController) GetAllSubFuncoes(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	unidadeGestora := r.URL.Query().Get("unidadeGestora")
-	if unidadeGestora == "" {
+	unidadeGestoraCodigo := r.URL.Query().Get("unidadeGestoraCodigo")
+	if unidadeGestoraCodigo == "" {
 		http.Error(w, "Parâmetro 'unidadeGestora' é obrigatório", http.StatusBadRequest)
 		return
 	}
-	exercicio := r.URL.Query().Get("exercicio")
-	if exercicio == "" {
+	ano := r.URL.Query().Get("ano")
+	if ano == "" {
 		http.Error(w, "Parâmetro 'exercicio' é obrigatório", http.StatusBadRequest)
 		return
 	}
@@ -47,7 +47,7 @@ func (controller *SubFuncaoController) GetAllSubFuncoes(w http.ResponseWriter, r
 	}
 	defer db.Close()
 	subFuncoesRepository := repositories.NewSubFuncaoRepository(db)
-	subFuncoes, err := subFuncoesRepository.GetAllSubFuncoes(unidadeGestora, exercicio, codigoFuncao)
+	subFuncoes, err := subFuncoesRepository.GetAllSubFuncoes(unidadeGestoraCodigo, ano, codigoFuncao)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))

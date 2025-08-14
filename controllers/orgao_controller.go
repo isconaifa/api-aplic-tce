@@ -17,14 +17,14 @@ func NewOrgaoController(repository *repositories.OrgaoRepository) *OrgaoControll
 
 func (controller *OrgaoController) GetAllOrgaos(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	unidadeGestora := r.URL.Query().Get("unidadeGestora")
-	if unidadeGestora == "" {
-		http.Error(w, "Parâmetro 'unidadeGestora' é obrigatório", http.StatusBadRequest)
+	unidadeGestoraCodigo := r.URL.Query().Get("unidadeGestoraCodigo")
+	if unidadeGestoraCodigo == "" {
+		http.Error(w, "Parâmetro 'unidadeGestoraCodigo' é obrigatório", http.StatusBadRequest)
 		return
 	}
-	exercicio := r.URL.Query().Get("exercicio")
-	if exercicio == "" {
-		http.Error(w, "Parâmetro 'exercicio' é obrigatório", http.StatusBadRequest)
+	ano := r.URL.Query().Get("ano")
+	if ano == "" {
+		http.Error(w, "Parâmetro 'ano' é obrigatório", http.StatusBadRequest)
 		return
 	}
 	db, err := database.Connectdb()
@@ -34,7 +34,7 @@ func (controller *OrgaoController) GetAllOrgaos(w http.ResponseWriter, r *http.R
 	}
 	defer db.Close()
 	orgaoRepository := repositories.NewOrgaoRepository(db)
-	orgaos, err := orgaoRepository.GetAllOrgaos(unidadeGestora, exercicio)
+	orgaos, err := orgaoRepository.GetAllOrgaos(unidadeGestoraCodigo, ano)
 	if err != nil {
 		http.Error(w, "Erro ao buscar orgaos", http.StatusInternalServerError)
 		return

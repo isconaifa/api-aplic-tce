@@ -13,7 +13,7 @@ func NewFonteDestinacaoRecursoRepository(db *sql.DB) *FonteDestinacaoRecursoRepo
 	return &FonteDestinacaoRecursoRepository{db: db}
 }
 
-func (repository *FonteDestinacaoRecursoRepository) GetAllFontesDestinacaoRecurso(unidadeGestora, exercicio string) ([]models.FonteDestinacaoRecurso, error) {
+func (repository *FonteDestinacaoRecursoRepository) GetAllFontesDestinacaoRecurso(unidadeGestoraCodigo, ano string) ([]models.FonteDestinacaoRecurso, error) {
 	query := "select distinct d.dresp_codigo as frec_codigo,\n" +
 		"d.dresp_descricao as frec_descricao\n" +
 		"from aplic2008.empenho e inner join\n" +
@@ -24,7 +24,7 @@ func (repository *FonteDestinacaoRecursoRepository) GetAllFontesDestinacaoRecurs
 		"and e.Exercicio = :2\n" +
 		"order by d.dresp_descricao"
 
-	rows, err := repository.db.Query(query, unidadeGestora, exercicio)
+	rows, err := repository.db.Query(query, unidadeGestoraCodigo, ano)
 	if err != nil {
 		return nil, err
 	}

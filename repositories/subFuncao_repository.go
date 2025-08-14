@@ -13,7 +13,7 @@ func NewSubFuncaoRepository(db *sql.DB) *SubFuncaoRepository {
 	return &SubFuncaoRepository{db: db}
 }
 
-func (r *SubFuncaoRepository) GetAllSubFuncoes(unidadeGestora, exercicio string, codigoFuncao int) ([]models.Subfuncao, error) {
+func (r *SubFuncaoRepository) GetAllSubFuncoes(unidadeGestoraCodigo, ano string, codigoFuncao int) ([]models.Subfuncao, error) {
 	query := "select distinct sf.sfn_codigo, sf.sfn_descricao\n" +
 		"from aplic2008.empenho e, aplic2008.subfuncao sf\n" +
 		"where e.sfn_codigo = sf.sfn_codigo\n" +
@@ -21,7 +21,7 @@ func (r *SubFuncaoRepository) GetAllSubFuncoes(unidadeGestora, exercicio string,
 		"and e.Exercicio = :2\n" +
 		"and e.fn_Codigo = :3\n" +
 		"order by sf.sfn_descricao"
-	rows, err := r.db.Query(query, unidadeGestora, exercicio, codigoFuncao)
+	rows, err := r.db.Query(query, unidadeGestoraCodigo, ano, codigoFuncao)
 	if err != nil {
 		return nil, err
 	}

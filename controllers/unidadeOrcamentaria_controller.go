@@ -17,13 +17,13 @@ func NewUnidadeOrcamentariaController(repository *repositories.UnidadeOrcamentar
 
 func (controller *UnidadeOrcamentariaController) GetAllUnidadeOrcamentaria(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	unidadeGestora := r.URL.Query().Get("unidadeGestora")
-	if unidadeGestora == "" {
-		http.Error(w, "Parâmetro 'unidadeGestora' é obrigatório", http.StatusBadRequest)
+	unidadeGestoraCodigo := r.URL.Query().Get("unidadeGestoraCodigo")
+	if unidadeGestoraCodigo == "" {
+		http.Error(w, "Parâmetro 'unidadeGestoraCodigo' é obrigatório", http.StatusBadRequest)
 		return
 	}
-	exercicio := r.URL.Query().Get("exercicio")
-	if exercicio == "" {
+	ano := r.URL.Query().Get("ano")
+	if ano == "" {
 		http.Error(w, "Parâmetro 'exercicio' é obrigatório", http.StatusBadRequest)
 		return
 	}
@@ -40,7 +40,7 @@ func (controller *UnidadeOrcamentariaController) GetAllUnidadeOrcamentaria(w htt
 	}
 	defer db.Close()
 	unidadeOrcamentariaRepository := repositories.NewUnidadeOrcamentariaRepository(db)
-	unidadeOrcamentaria, err := unidadeOrcamentariaRepository.GetAllUnidadeOrcamentaria(unidadeGestora, exercicio, codigoOrgao)
+	unidadeOrcamentaria, err := unidadeOrcamentariaRepository.GetAllUnidadeOrcamentaria(unidadeGestoraCodigo, ano, codigoOrgao)
 	if err != nil {
 		http.Error(w, "Erro ao buscar Unidade Orcamentaria", http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
