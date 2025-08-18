@@ -85,9 +85,37 @@ func SetupRoutes() (*mux.Router, error) {
 	filtroOrgaoRepository := repositories.NewFiltroOrgaoRepository(db)
 	filtroOrgaoController := controllers.NewFiltroOrgaoController(filtroOrgaoRepository)
 
-	// request de de filtroFuncao
+	// request de filtroFuncao
 	filtroFuncaoRepository := repositories.NewFiltroFuncaoRepository(db)
 	filtroFuncaoController := controllers.NewFiltroFuncaoController(filtroFuncaoRepository)
+
+	// request de  filtrosubFuncao
+	filtroSubFuncaoRepository := repositories.NewFiltroSubFuncaoRepository(db)
+	filtroSubFuncaoController := controllers.NewFiltroSubFuncaoController(filtroSubFuncaoRepository)
+
+	// request de diltrodestinacaorecursos
+	filtroDestinacaoRecursoRepository := repositories.NewFiltroDestinacaoRecursoRepository(db)
+	filtroDestinacaoRecursoController := controllers.NewFiltroDestinacaoRecursoController(filtroDestinacaoRecursoRepository)
+
+	// request de  filtroGrupoFonte
+	filtroGrupoFonteRepository := repositories.NewFiltroGrupoFonteRepository(db)
+	filtroGrupoFonteController := controllers.NewFiltroGrupoFonteController(filtroGrupoFonteRepository)
+
+	// request de  filtroPrograma
+	filtroProgramaRepository := repositories.NewFiltroProgramaRepository(db)
+	filtroProgramaController := controllers.NewFiltroProgramaController(filtroProgramaRepository)
+
+	// request de  filtroAcao
+	filtroAcaoRepository := repositories.NewFiltroAcaoRepository(db)
+	filtroAcaoController := controllers.NewFiltroAcaoController(filtroAcaoRepository)
+
+	// request de  filtroDetalheFonte
+	filtroDetalheFonteRepository := repositories.NewFiiltroDetalheFonteRepository(db)
+	filtroDetalheFonteController := controllers.NewFiltroDetalheFonteController(filtroDetalheFonteRepository)
+
+	// request de  filtroUnidadeOrcamentaria
+	filtroUnidadeOrcamentariaRepository := repositories.NewFiltroUnidadeOrcamentariaRepository(db)
+	filtroUnidadeOrcamentariaController := controllers.NewFiltroUnidadeOrcamentariaController(filtroUnidadeOrcamentariaRepository)
 
 	r := mux.NewRouter()
 	r.HandleFunc("/aplic/exercicios", excontroller.GetExercicios).Methods("GET")
@@ -109,5 +137,12 @@ func SetupRoutes() (*mux.Router, error) {
 	r.HandleFunc("/aplic/programas", programaController.GetAllProgramas).Methods("GET")
 	r.HandleFunc("/aplic/filtroOrgao", filtroOrgaoController.GetAllFiltroOrgao).Methods("GET")
 	r.HandleFunc("/aplic/filtroFuncao", filtroFuncaoController.GetAllFiltroFuncao).Methods("GET")
+	r.HandleFunc("/aplic/filtroSubFuncao", filtroSubFuncaoController.GetAllFiltroSubFuncao).Methods("GET")
+	r.HandleFunc("/aplic/filtroDestinacaoRecurso", filtroDestinacaoRecursoController.GetAllFiltroDestinacaoRecurso).Methods("GET")
+	r.HandleFunc("/aplic/filtroGrupoFonte", filtroGrupoFonteController.GetAllFiltroGrupoFonte).Methods("GET")
+	r.HandleFunc("/aplic/filtroPrograma", filtroProgramaController.GetAllProgramas).Methods("GET")
+	r.HandleFunc("/aplic/filtroAcao", filtroAcaoController.GetAllFiltroAcao).Methods("GET")
+	r.HandleFunc("/aplic/filtroDetalheFonte", filtroDetalheFonteController.GetAllFiiltroDetalheFonte).Methods("GET")
+	r.HandleFunc("/aplic/filtroUnidadeOrcamentaria", filtroUnidadeOrcamentariaController.GetAllFiltroUnidadeOrcamentaria).Methods("GET")
 	return r, nil
 }
