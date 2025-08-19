@@ -1,6 +1,6 @@
 package models
 
-type filtroValorEmpenhado struct {
+type FiltroValorEmpenhado struct {
 	Emp_Data                                string  `json:"empenho_data"`
 	Emp_Numero                              string  `json:"empenho_numero"`
 	Credor                                  string  `json:"credor"`

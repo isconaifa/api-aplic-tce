@@ -133,6 +133,16 @@ func SetupRoutes() (*mux.Router, error) {
 	filtronumeroPeriodoEmpenhadoRepository := repositories.NewFiltroPeriodoEmpenhadoRepository(db)
 	filtroPeriodoEmpenhadoController := controllers.NewFiltroPeriodoEmpenhadoController(filtronumeroPeriodoEmpenhadoRepository)
 
+	// request de  filtro por valor empenhado
+	filtronumeroValorEmpenhadoRepository := repositories.NewFiltroValorEmpenhadoRepository(db)
+	filtroValorEmpenhadoController := controllers.NewFiltroValorEmpenhadoController(filtronumeroValorEmpenhadoRepository)
+
+	// request de  filtro por valor modalidade licitacao
+	filtronumeroModalidadeLicitacaoRepository := repositories.NewFiltroModalidadeLicitacaoRepository(db)
+	filtroModalidadeLicitacaoController := controllers.NewFiltroModalidadeLicitacaoController(filtronumeroModalidadeLicitacaoRepository)
+
+	// request de  filtro por valor somenteLiquidados
+
 	r := mux.NewRouter()
 	r.HandleFunc("/aplic/exercicios", excontroller.GetExercicios).Methods("GET")
 	r.HandleFunc("/aplic/competencias", competcontroller.GetCompetencias).Methods("GET")
@@ -164,5 +174,7 @@ func SetupRoutes() (*mux.Router, error) {
 	r.HandleFunc("/aplic/filtroNumLicitacoes", filtroLicitacoesController.GetAllFiltroNumLicitacoes).Methods("GET")
 	r.HandleFunc("/aplic/filtroDotacao", filtroDotacaoController.ObterFiltroDotacao).Methods("GET")
 	r.HandleFunc("/aplic/filtroPeriodoEmpenhado", filtroPeriodoEmpenhadoController.GetAllFiltroPeriodoEmpenhado).Methods("GET")
+	r.HandleFunc("/aplic/filtroValorEmpenhado", filtroValorEmpenhadoController.GetAllFiltroValorEmpenhado).Methods("GET")
+	r.HandleFunc("/aplic/filtroModalidadeLicitacao", filtroModalidadeLicitacaoController.GetAllFiltroModalidadeLicitacao).Methods("GET")
 	return r, nil
 }
