@@ -117,6 +117,22 @@ func SetupRoutes() (*mux.Router, error) {
 	filtroUnidadeOrcamentariaRepository := repositories.NewFiltroUnidadeOrcamentariaRepository(db)
 	filtroUnidadeOrcamentariaController := controllers.NewFiltroUnidadeOrcamentariaController(filtroUnidadeOrcamentariaRepository)
 
+	// request de  filtro por numero de empenho
+	filtronumeroEmpenhoRepository := repositories.NewFiltroNumEmpenhoRepository(db)
+	filtroEmpenhoController := controllers.NewFiltroNumEmpenhoController(filtronumeroEmpenhoRepository)
+
+	// request de  filtro por numero de licitacoes
+	filtronumeroLicitacoesRepository := repositories.NewFiltroNumLicitacaoRepository(db)
+	filtroLicitacoesController := controllers.NewFiltroNumLicitacoesController(filtronumeroLicitacoesRepository)
+
+	// request de  filtro por dotacao
+	filtronumeroDotacaoRepository := repositories.NewFiltroDotacaoRepository(db)
+	filtroDotacaoController := controllers.NewFiltroDotacaoController(filtronumeroDotacaoRepository)
+
+	// request de  filtro por periodo empenhado
+	filtronumeroPeriodoEmpenhadoRepository := repositories.NewFiltroPeriodoEmpenhadoRepository(db)
+	filtroPeriodoEmpenhadoController := controllers.NewFiltroPeriodoEmpenhadoController(filtronumeroPeriodoEmpenhadoRepository)
+
 	r := mux.NewRouter()
 	r.HandleFunc("/aplic/exercicios", excontroller.GetExercicios).Methods("GET")
 	r.HandleFunc("/aplic/competencias", competcontroller.GetCompetencias).Methods("GET")
@@ -144,5 +160,9 @@ func SetupRoutes() (*mux.Router, error) {
 	r.HandleFunc("/aplic/filtroAcao", filtroAcaoController.GetAllFiltroAcao).Methods("GET")
 	r.HandleFunc("/aplic/filtroDetalheFonte", filtroDetalheFonteController.GetAllFiiltroDetalheFonte).Methods("GET")
 	r.HandleFunc("/aplic/filtroUnidadeOrcamentaria", filtroUnidadeOrcamentariaController.GetAllFiltroUnidadeOrcamentaria).Methods("GET")
+	r.HandleFunc("/aplic/filtroNumEmpenho", filtroEmpenhoController.GetFiltroNumEmpenho).Methods("GET")
+	r.HandleFunc("/aplic/filtroNumLicitacoes", filtroLicitacoesController.GetAllFiltroNumLicitacoes).Methods("GET")
+	r.HandleFunc("/aplic/filtroDotacao", filtroDotacaoController.ObterFiltroDotacao).Methods("GET")
+	r.HandleFunc("/aplic/filtroPeriodoEmpenhado", filtroPeriodoEmpenhadoController.GetAllFiltroPeriodoEmpenhado).Methods("GET")
 	return r, nil
 }
