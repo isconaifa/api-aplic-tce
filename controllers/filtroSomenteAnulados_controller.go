@@ -40,16 +40,22 @@ func (controller *FiltroSomenteAnuladosController) GetAllFiltroSomenteAnulados(w
 	}
 	db, err := database.Connectdb()
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Erro ao conectar ao banco: %v", err), http.StatusInternalServerError)
+		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)
 		return
 	}
 	defer db.Close()
 	filtroSomenteAnuladosRepository := repositories.NewFiltroSomenteAnuladosRepository(db)
 	filtroSomenteAnulados, err := filtroSomenteAnuladosRepository.GetAllFiltroSomenteAnulados(unidadeGestoraCodigo, ano, dataInicioStr, dataFimStr)
 	if err != nil {
+		fmt.Println(err)
 		http.Error(w, fmt.Sprintf("Erro ao buscar filtroSomenteAnulados: %v", err), http.StatusInternalServerError)
 		return
 	}
+	jsonFiltroSomenteAnulados, err := json.Marshal(filtroSomenteAnulados)
+	if err != nil {
+		http.Error(w, "Erro ao converter para JSON", http.StatusInternalServerError)
+		return
+	}
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(filtroSomenteAnulados)
+	w.Write(jsonFiltroSomenteAnulados)
 }

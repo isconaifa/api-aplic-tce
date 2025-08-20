@@ -77,6 +77,10 @@ func SetupRoutes() (*mux.Router, error) {
 	unidadeOrcamentariaRepository := repositories.NewUnidadeOrcamentariaRepository(db)
 	unidadeOrcamentariaController := controllers.NewUnidadeOrcamentariaController(unidadeOrcamentariaRepository)
 
+	// request de  modalidadeLicitacao
+	modalidadeLicitacaoRepository := repositories.NewModalidadeLicitacaoRepository(db)
+	modalidadeLicitacaoController := controllers.NewModalidadeLicitacaoController(modalidadeLicitacaoRepository)
+
 	// request de programa
 	programaRepository := repositories.NewProgramaRepository(db)
 	programaController := controllers.NewProgramaController(programaRepository)
@@ -142,6 +146,12 @@ func SetupRoutes() (*mux.Router, error) {
 	filtroModalidadeLicitacaoController := controllers.NewFiltroModalidadeLicitacaoController(filtronumeroModalidadeLicitacaoRepository)
 
 	// request de  filtro por valor somenteLiquidados
+	filtronumeroSomenteLiquidadosRepository := repositories.NewFiltroSomenteLiquidadosRepository(db)
+	filtroSomenteLiquidadosController := controllers.NewFiltroSomenteLiquidadosController(filtronumeroSomenteLiquidadosRepository)
+
+	// request de  filtro por valor somenteAnulados
+	SomenteAnuladosRepository := repositories.NewFiltroSomenteAnuladosRepository(db)
+	filtroSomenteAnuladosController := controllers.NewFiltroSomenteAnuladosController(SomenteAnuladosRepository)
 
 	r := mux.NewRouter()
 	r.HandleFunc("/aplic/exercicios", excontroller.GetExercicios).Methods("GET")
@@ -159,6 +169,7 @@ func SetupRoutes() (*mux.Router, error) {
 	r.HandleFunc("/aplic/subfuncoes", subFuncaoController.GetAllSubFuncoes).Methods("GET")
 	r.HandleFunc("/aplic/detalhe-fonte", detalheFonteController.GetAllDetalheFonte).Methods("GET")
 	r.HandleFunc("/aplic/grupo-fonte", grupoFonteController.GetAllGruposFonte).Methods("GET")
+	r.HandleFunc("/aplic/modalidades-licitacoes", modalidadeLicitacaoController.GetAllModalidadeLicitacao).Methods("GET")
 	r.HandleFunc("/aplic/unidades-orcamentarias", unidadeOrcamentariaController.GetAllUnidadeOrcamentaria).Methods("GET")
 	r.HandleFunc("/aplic/programas", programaController.GetAllProgramas).Methods("GET")
 	r.HandleFunc("/aplic/filtroOrgao", filtroOrgaoController.GetAllFiltroOrgao).Methods("GET")
@@ -176,5 +187,8 @@ func SetupRoutes() (*mux.Router, error) {
 	r.HandleFunc("/aplic/filtroPeriodoEmpenhado", filtroPeriodoEmpenhadoController.GetAllFiltroPeriodoEmpenhado).Methods("GET")
 	r.HandleFunc("/aplic/filtroValorEmpenhado", filtroValorEmpenhadoController.GetAllFiltroValorEmpenhado).Methods("GET")
 	r.HandleFunc("/aplic/filtroModalidadeLicitacao", filtroModalidadeLicitacaoController.GetAllFiltroModalidadeLicitacao).Methods("GET")
+	r.HandleFunc("/aplic/filtroSomenteLiquidados", filtroSomenteLiquidadosController.GetAllFiltroSomenteLiquidados).Methods("GET")
+	r.HandleFunc("/aplic/filtroSomenteAnulados", filtroSomenteAnuladosController.GetAllFiltroSomenteAnulados).Methods("GET")
+
 	return r, nil
 }
