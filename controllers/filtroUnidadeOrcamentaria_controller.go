@@ -5,7 +5,6 @@ import (
 	"api-aplic-web/repositories"
 	"encoding/json"
 	"net/http"
-	"strconv"
 )
 
 type FiltroUnidadeOrcamentariaController struct {
@@ -38,11 +37,7 @@ func (controller *FiltroUnidadeOrcamentariaController) GetAllFiltroUnidadeOrcame
 		http.Error(w, "Parâmetro 'codigoUnidadeOrcamentaria' é obrigatório", http.StatusBadRequest)
 		return
 	}
-	codigoDestinacaoRecurso, err := strconv.Atoi(r.URL.Query().Get("codigoDestinacaoRecurso"))
-	if err != nil {
-		http.Error(w, "ocorreu um erro", http.StatusBadRequest)
-		return
-	}
+
 	db, err := database.Connectdb()
 	if err != nil {
 		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)
@@ -50,7 +45,7 @@ func (controller *FiltroUnidadeOrcamentariaController) GetAllFiltroUnidadeOrcame
 	}
 	defer db.Close()
 	filtroUnidadeOrcamentariaRepository := repositories.NewFiltroUnidadeOrcamentariaRepository(db)
-	filtroUnidadeOrcamentaria, err := filtroUnidadeOrcamentariaRepository.GetAllFiltroUnidadeOrcamentaria(unidadeGestoraCodigo, ano, codigoOrgao, codigoUnidadeOrcamentaria, codigoDestinacaoRecurso)
+	filtroUnidadeOrcamentaria, err := filtroUnidadeOrcamentariaRepository.GetAllFiltroUnidadeOrcamentaria(unidadeGestoraCodigo, ano, codigoOrgao, codigoUnidadeOrcamentaria)
 	if err != nil {
 		http.Error(w, "Erro ao buscar filtroUnidadeOrcamentaria", http.StatusInternalServerError)
 		return

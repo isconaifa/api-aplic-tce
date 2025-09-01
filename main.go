@@ -16,6 +16,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
 	route.Use(middlewares.LoggingMiddleware)
 	route.Use(middlewares.EnableCors)
 	fmt.Printf("Server is running on port %d\n", configs.Porta)

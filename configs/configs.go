@@ -14,6 +14,7 @@ var (
 )
 
 func Carregar() {
+
 	var err error
 	if err = godotenv.Load(); err != nil {
 		log.Fatal(err)
@@ -31,4 +32,5 @@ func Carregar() {
 	service := os.Getenv("DB_SERVICE")
 
 	StringConexion = fmt.Sprintf("oracle://%s:%s@%s:%s/%s", username, password, host, port, service)
+
 }

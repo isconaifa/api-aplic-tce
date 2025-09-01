@@ -153,6 +153,18 @@ func SetupRoutes() (*mux.Router, error) {
 	SomenteAnuladosRepository := repositories.NewFiltroSomenteAnuladosRepository(db)
 	filtroSomenteAnuladosController := controllers.NewFiltroSomenteAnuladosController(SomenteAnuladosRepository)
 
+	//request de filtro Numero de contrato
+	filtroNumeroContratoRepo := repositories.NewFiltroNumContratoRepository(db)
+	filtoNumContratoController := controllers.NewFiltroNumContratoController(filtroNumeroContratoRepo)
+
+	// request de filtro Numero de convenio
+	filtroNumeroConvenioRepo := repositories.NewFiltroNumConvenioRepository(db)
+	filtroNumConvenioController := controllers.NewFiltroNumConvenioController(filtroNumeroConvenioRepo)
+
+	// request de filtro Numero de concurso
+	filtroNumConcurso := repositories.NewFiltroNumConcursoRepository(db)
+	filtroNumConcursoController := controllers.NewFiltroNumConcursoController(filtroNumConcurso)
+
 	r := mux.NewRouter()
 	r.HandleFunc("/aplic/exercicios", excontroller.GetExercicios).Methods("GET")
 	r.HandleFunc("/aplic/competencias", competcontroller.GetCompetencias).Methods("GET")
@@ -189,6 +201,8 @@ func SetupRoutes() (*mux.Router, error) {
 	r.HandleFunc("/aplic/filtroModalidadeLicitacao", filtroModalidadeLicitacaoController.GetAllFiltroModalidadeLicitacao).Methods("GET")
 	r.HandleFunc("/aplic/filtroSomenteLiquidados", filtroSomenteLiquidadosController.GetAllFiltroSomenteLiquidados).Methods("GET")
 	r.HandleFunc("/aplic/filtroSomenteAnulados", filtroSomenteAnuladosController.GetAllFiltroSomenteAnulados).Methods("GET")
-
+	r.HandleFunc("/aplic/filtroNumContrato", filtoNumContratoController.GetFiltroNumContrato).Methods("GET")
+	r.HandleFunc("/aplic/filtroNumConvenio", filtroNumConvenioController.GetFiltroNumConvenio).Methods("GET")
+	r.HandleFunc("/aplic/filtroNumConcurso", filtroNumConcursoController.GetFiltroNumConcurso).Methods("GET")
 	return r, nil
 }
