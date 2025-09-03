@@ -37,6 +37,10 @@ func (controller *FiltroValorEmpenhadoController) GetAllFiltroValorEmpenhado(w h
 		http.Error(w, "Parâmetro 'valorFinalStr' é obrigatório", http.StatusBadRequest)
 		return
 	}
+	if valorFinalStr < valorInicialStr {
+		http.Error(w, "Valor final deve ser maior que valor inicial", http.StatusBadRequest)
+		return
+	}
 	db, err := database.Connectdb()
 	if err != nil {
 		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)

@@ -165,6 +165,10 @@ func SetupRoutes() (*mux.Router, error) {
 	filtroNumConcurso := repositories.NewFiltroNumConcursoRepository(db)
 	filtroNumConcursoController := controllers.NewFiltroNumConcursoController(filtroNumConcurso)
 
+	// request de liquidacoes
+	liquidacaoRepository := repositories.NewLiquidacaoRepository(db)
+	liquidacaoController := controllers.NewLiquidacaoController(liquidacaoRepository)
+
 	r := mux.NewRouter()
 	r.HandleFunc("/aplic/exercicios", excontroller.GetExercicios).Methods("GET")
 	r.HandleFunc("/aplic/competencias", competcontroller.GetCompetencias).Methods("GET")
@@ -204,5 +208,6 @@ func SetupRoutes() (*mux.Router, error) {
 	r.HandleFunc("/aplic/filtroNumContrato", filtoNumContratoController.GetFiltroNumContrato).Methods("GET")
 	r.HandleFunc("/aplic/filtroNumConvenio", filtroNumConvenioController.GetFiltroNumConvenio).Methods("GET")
 	r.HandleFunc("/aplic/filtroNumConcurso", filtroNumConcursoController.GetFiltroNumConcurso).Methods("GET")
+	r.HandleFunc("/aplic/liquidacoes", liquidacaoController.GetLiquidacoes).Methods("GET")
 	return r, nil
 }

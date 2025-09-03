@@ -38,6 +38,10 @@ func (controller *FiltroPeriodoEmpenhadoController) GetAllFiltroPeriodoEmpenhado
 		http.Error(w, "Parâmetro 'dataFimStr' é obrigatório", http.StatusBadRequest)
 		return
 	}
+	if dataFimStr < dataInicioStr {
+		http.Error(w, " Data final tem que ser maior que data inicial", http.StatusBadRequest)
+		return
+	}
 	db, err := database.Connectdb()
 	if err != nil {
 		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)
