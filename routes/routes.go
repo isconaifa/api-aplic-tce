@@ -169,6 +169,10 @@ func SetupRoutes() (*mux.Router, error) {
 	liquidacaoRepository := repositories.NewLiquidacaoRepository(db)
 	liquidacaoController := controllers.NewLiquidacaoController(liquidacaoRepository)
 
+	// request de pagamentos
+	pagamentoRepository := repositories.NewPagamentoRepository(db)
+	pagamentoController := controllers.NewPagamentoController(pagamentoRepository)
+
 	r := mux.NewRouter()
 	r.HandleFunc("/aplic/exercicios", excontroller.GetExercicios).Methods("GET")
 	r.HandleFunc("/aplic/competencias", competcontroller.GetCompetencias).Methods("GET")
@@ -209,5 +213,6 @@ func SetupRoutes() (*mux.Router, error) {
 	r.HandleFunc("/aplic/filtroNumConvenio", filtroNumConvenioController.GetFiltroNumConvenio).Methods("GET")
 	r.HandleFunc("/aplic/filtroNumConcurso", filtroNumConcursoController.GetFiltroNumConcurso).Methods("GET")
 	r.HandleFunc("/aplic/liquidacoes", liquidacaoController.GetLiquidacoes).Methods("GET")
+	r.HandleFunc("/aplic/pagamentos", pagamentoController.GetPagamentos).Methods("GET")
 	return r, nil
 }
