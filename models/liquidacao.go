@@ -3,26 +3,26 @@ package models
 import "time"
 
 type Liquidacao struct {
-	NumLiquidacao             string     `json:"Nº da Liquidação"`
-	Data                      time.Time  `json:"Data"`
-	Valor                     float64    `json:"Valor"`
-	Credor                    string     `json:"Credor"`
-	OrgaoCodigo               string     `json:"Órgão(código)"`
-	UnidadeOrcamentariaCodigo string     `json:"Unidade Orçamentária(código)"`
-	NumEmpenho                string     `json:"Nº Empenho"`
-	Itens                     int        `json:"Item(ns)"`
-	DescontoLiqPago           float64    `json:"Desconto Liq.Pago"`
-	DescontoLiquidado         float64    `json:"Desconto Liquidado"`
-	NotaFiscal                int        `json:"Nota Fiscal"`
-	Recibos                   int        `json:"Recibo(s)"`
-	ValorPago                 float64    `json:"Valor Pago"`
-	AnulacaoLiquidacao        float64    `json:"Anulação Liquidação"`
-	Convenio                  *string    `json:"Convênio"`
-	ConvenioAditivo           *string    `json:"Convênio Aditivo"`
-	TipoDocumentoHabil        *string    `json:"Tipo Documento Hábil"`
-	DataAtesto                *time.Time `json:"Data do atesto"`
-	MatriculaRespLiquidacao   *string    `json:"Matr. do resp. pela liquidação"`
-	MatriculaRespAtesto       *string    `json:"Matr. do resp. pelo atesto"`
-	ResponsavelLiquidacao     *string    `json:"Responsável pela liquidação"`
-	ResponsavelAtesto         *string    `json:"Responsável pelo atesto"`
+	NumLiquidacao             string     `json:"num_liquidacao"`
+	Data                      time.Time  `json:"data"`
+	Valor                     float64    `json:"valor"`
+	Credor                    string     `json:"credor"`
+	OrgaoCodigo               string     `json:"orgao_codigo"`
+	UnidadeOrcamentariaCodigo string     `json:"unidade_orcamentaria_codigo"`
+	NumEmpenho                string     `json:"num_empenho"`
+	Itens                     int        `json:"itens"`
+	DescontoLiqPago           float64    `json:"desconto_liq_pago"`
+	DescontoLiquidado         float64    `json:"desconto_liquidado"`
+	NotaFiscal                int        `json:"nota_fiscal"`
+	Recibos                   int        `json:"recibos"`
+	ValorPago                 float64    `json:"valor_pago"`
+	AnulacaoLiquidacao        float64    `json:"anulacao_liquidacao"`
+	Convenio                  *string    `json:"convenio,omitempty"`
+	ConvenioAditivo           *string    `json:"convenio_aditivo,omitempty"`
+	TipoDocumentoHabil        *string    `json:"tipo_documento_habil,omitempty"`
+	DataAtesto                *time.Time `json:"data_atesto,omitempty"`
+	MatriculaRespLiquidacao   *string    `json:"matricula_resp_liquidacao,omitempty"`
+	MatriculaRespAtesto       *string    `json:"matricula_resp_atesto,omitempty"`
+	ResponsavelLiquidacao     *string    `json:"responsavel_liquidacao,omitempty"`
+	ResponsavelAtesto         *string    `json:"responsavel_atesto,omitempty"`
 }
