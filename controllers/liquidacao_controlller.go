@@ -56,10 +56,9 @@ func (controller *LiquidacaoController) GetLiquidacoes(w http.ResponseWriter, r 
 		http.Error(w, fmt.Sprintf("Erro ao buscar liquidacoes: %v", err), http.StatusInternalServerError)
 		return
 	}
-	jsonLiquidacoes, err := json.Marshal(liquidacoes)
+	err = json.NewEncoder(w).Encode(liquidacoes)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Erro ao converter para JSON: %v", err), http.StatusInternalServerError)
 		return
 	}
-	w.Write(jsonLiquidacoes)
 }
