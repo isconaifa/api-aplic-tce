@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -39,7 +40,9 @@ func (controller *FiltroDetalheFonteController) GetAllFiiltroDetalheFonte(w http
 		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	filtroDetalheFonteRepository := repositories.NewFiiltroDetalheFonteRepository(db)
 	filtroDetalheFontes, err := filtroDetalheFonteRepository.GetAllFiiltroDetalheFonte(unidadeGestoraCodigo, ano, codigoDestinacaoRecurso)
 	if err != nil {
@@ -47,10 +50,5 @@ func (controller *FiltroDetalheFonteController) GetAllFiiltroDetalheFonte(w http
 		http.Error(w, "Erro ao buscar filtroDetalheFontes", http.StatusInternalServerError)
 		return
 	}
-	filtroDetalheFontesJson, err := json.Marshal(filtroDetalheFontes)
-	if err != nil {
-		http.Error(w, "Erro ao converter para json", http.StatusInternalServerError)
-		return
-	}
-	w.Write(filtroDetalheFontesJson)
+	_ = json.NewEncoder(w).Encode(filtroDetalheFontes)
 }

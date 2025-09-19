@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"net/http"
 )
@@ -46,18 +47,14 @@ func (controller *FiltroValorEmpenhadoController) GetAllFiltroValorEmpenhado(w h
 		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	filtroValorEmpenhadoRepository := repositories.NewFiltroValorEmpenhadoRepository(db)
 	filtroValorEmpenhados, err := filtroValorEmpenhadoRepository.GetAllFiltroValorEmpenhado(unidadeGestoraCodigo, ano, valorInicialStr, valorFinalStr)
 	if err != nil {
 		http.Error(w, "Erro ao buscar programas", http.StatusInternalServerError)
 		return
 	}
-	conversaoJSON, err := json.Marshal(filtroValorEmpenhados)
-	if err != nil {
-		http.Error(w, "Erro ao converter para JSON", http.StatusInternalServerError)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(conversaoJSON)
+	_ = json.NewEncoder(w).Encode(filtroValorEmpenhados)
 }

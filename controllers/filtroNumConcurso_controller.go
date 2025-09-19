@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -36,19 +37,15 @@ func (controller *FiltroNumConcursoController) GetFiltroNumConcurso(w http.Respo
 		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	numConcursoRepo := repositories.NewFiltroNumConcursoRepository(db)
 	numConcursoController, err := numConcursoRepo.GetFiltroNumConcurso(unidadeGestoraCodigo, ano, numConcurso)
 	if err != nil {
 		http.Error(w, "Erro ao buscar o número de concurso", http.StatusInternalServerError)
 		return
 	}
-	jsonNumConcurso, err := json.Marshal(numConcursoController)
-	if err != nil {
-		http.Error(w, "Erro ao converter para JSON", http.StatusInternalServerError)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonNumConcurso)
+	_ = json.NewEncoder(w).Encode(numConcursoController)
 
 }

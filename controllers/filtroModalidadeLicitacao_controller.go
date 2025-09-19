@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -40,18 +41,14 @@ func (controller *FiltroModalidadeLicitacaoController) GetAllFiltroModalidadeLic
 		http.Error(w, fmt.Sprintf("Erro ao conectar ao banco: %v", err), http.StatusInternalServerError)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	filtroModalidadeLicitacaoRepository := repositories.NewFiltroModalidadeLicitacaoRepository(db)
 	filtroModalidadeLicitacaos, err := filtroModalidadeLicitacaoRepository.GetAllFilterModalidadeLicitacao(unidadeGestoraCodigo, ano, codigoModalidadeLicitacao)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Erro ao buscar filtroModalidadeLicitacaos: %v", err), http.StatusInternalServerError)
 		return
 	}
-	convertionJSON, err := json.Marshal(filtroModalidadeLicitacaos)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Erro ao converter para JSON: %v", err), http.StatusInternalServerError)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(convertionJSON)
+	_ = json.NewEncoder(w).Encode(filtroModalidadeLicitacaos)
 }

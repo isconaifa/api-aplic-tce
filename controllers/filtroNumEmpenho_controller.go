@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -38,7 +39,9 @@ func (controller *FiltroNumEmpenhoController) GetFiltroNumEmpenho(w http.Respons
 		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	filtroNumEmpenhoRepository := repositories.NewFiltroNumEmpenhoRepository(db)
 	filtroNumEmpenho, err := filtroNumEmpenhoRepository.GetFiltroNumEmpenho(unidadeGestoraCodigo, ano, numEmpenho)
 	if err != nil {
@@ -46,11 +49,5 @@ func (controller *FiltroNumEmpenhoController) GetFiltroNumEmpenho(w http.Respons
 		http.Error(w, "Erro ao buscar filtroNumEmpenho", http.StatusInternalServerError)
 		return
 	}
-	jsonFiltroNumEmpenho, err := json.Marshal(filtroNumEmpenho)
-	if err != nil {
-		http.Error(w, "Erro ao converter para JSON", http.StatusInternalServerError)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonFiltroNumEmpenho)
+	_ = json.NewEncoder(w).Encode(filtroNumEmpenho)
 }

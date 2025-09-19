@@ -3,7 +3,9 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -24,24 +26,17 @@ func (controller *CadastroGeralController) GetAllCadastroGeral(w http.ResponseWr
 	}
 	db, err := database.Connectdb()
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		http.Error(w, fmt.Sprintf("Erro ao conectar ao banco: %v", err), http.StatusInternalServerError)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	cadGeralRepository := repositories.NewCadastroGeralRepository(db)
 	cadastroGeral, err := cadGeralRepository.GetAllCadastroGeral(unidadeGestoraCodigo)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		http.Error(w, fmt.Sprintf("Erro ao buscar cadastro geral: %v", err), http.StatusInternalServerError)
 		return
 	}
-	jsonCadastroGeral, err := json.Marshal(cadastroGeral)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonCadastroGeral)
+	_ = json.NewEncoder(w).Encode(cadastroGeral)
 }

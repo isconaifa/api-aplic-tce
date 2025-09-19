@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -38,7 +39,9 @@ func (controller *FiltroNumConvenioController) GetFiltroNumConvenio(w http.Respo
 		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	filtroConvenioRepository := repositories.NewFiltroNumConvenioRepository(db)
 	filtroConvenioController, err := filtroConvenioRepository.GetFiltroNumConvenio(unidadeGestoraCodigo, ano, numConvenio)
 	if err != nil {
@@ -46,11 +49,5 @@ func (controller *FiltroNumConvenioController) GetFiltroNumConvenio(w http.Respo
 		http.Error(w, "Erro ao buscar filtro de convénios", http.StatusInternalServerError)
 		return
 	}
-	jsonFiltroConvenio, err := json.Marshal(filtroConvenioController)
-	if err != nil {
-		http.Error(w, "Erro ao converter para JSON", http.StatusInternalServerError)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonFiltroConvenio)
+	_ = json.NewEncoder(w).Encode(filtroConvenioController)
 }

@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -45,13 +46,14 @@ func (controller *FiltroSomenteLiquidadosController) GetAllFiltroSomenteLiquidad
 		http.Error(w, fmt.Sprintf("Erro ao conectar ao banco: %v", err), http.StatusInternalServerError)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	filtroSomenteLiquidadosRepository := repositories.NewFiltroSomenteLiquidadosRepository(db)
 	filtroSomenteLiquidados, err := filtroSomenteLiquidadosRepository.GetAllFiltroSomenteLiquidados(unidadeGestoraCodigo, ano, dataInicioStr, dataFimStr)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Erro ao buscar filtroSomenteAnulados: %v", err), http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(filtroSomenteLiquidados)
+	_ = json.NewEncoder(w).Encode(filtroSomenteLiquidados)
 }

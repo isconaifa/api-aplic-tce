@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -35,7 +36,9 @@ func (controller *FiltroDestinacaoRecursoController) GetAllFiltroDestinacaoRecur
 		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	filtroDestinacaoRecursoRepository := repositories.NewFiltroDestinacaoRecursoRepository(db)
 	filtroDestinacaoRecursos, err := filtroDestinacaoRecursoRepository.GetAllFiltroDestinacaoRecurso(unidadeGestoraCodigo, ano, codigoDestinacaoRecurso)
 	if err != nil {
@@ -43,12 +46,6 @@ func (controller *FiltroDestinacaoRecursoController) GetAllFiltroDestinacaoRecur
 		http.Error(w, "Erro ao buscar filtroDestinacaoRecursos", http.StatusInternalServerError)
 		return
 	}
-	jsonFiltroDestinacaoRecursos, err := json.Marshal(filtroDestinacaoRecursos)
-	if err != nil {
-		http.Error(w, "Erro ao converter para JSON", http.StatusInternalServerError)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonFiltroDestinacaoRecursos)
+	_ = json.NewEncoder(w).Encode(filtroDestinacaoRecursos)
 
 }

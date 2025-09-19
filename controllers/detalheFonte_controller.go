@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"net/http"
 )
@@ -26,7 +27,9 @@ func (controller *DetalheFonteController) GetAllDetalheFonte(w http.ResponseWrit
 		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	detalheFonteRepository := repositories.NewDetalhefonteRepository(db)
 	detalheFonte, err := detalheFonteRepository.GetAllDetalhefonte(ano)
 	if err != nil {
@@ -34,12 +37,5 @@ func (controller *DetalheFonteController) GetAllDetalheFonte(w http.ResponseWrit
 		w.Write([]byte(err.Error()))
 		return
 	}
-	jsonDetalheFonte, err := json.Marshal(detalheFonte)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonDetalheFonte)
+	_ = json.NewEncoder(w).Encode(detalheFonte)
 }

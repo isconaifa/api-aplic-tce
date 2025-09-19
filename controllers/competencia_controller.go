@@ -3,7 +3,9 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -19,24 +21,17 @@ func (controller *CompetenciaController) GetCompetencias(w http.ResponseWriter, 
 	w.Header().Set("Content-Type", "application/json")
 	db, err := database.Connectdb()
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		http.Error(w, fmt.Sprintf("ocorreu ao conectar ao banco %v:", err), http.StatusInternalServerError)
 		return
 	}
-
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	competenciasRepository := repositories.NewCompetenciaRepository(db)
 	competencias, err := competenciasRepository.GetAllCompetencias()
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		http.Error(w, fmt.Sprintf("ocorreu ao buscar competencias %v:", err), http.StatusInternalServerError)
 		return
 	}
-	jsonCompetencias, err := json.Marshal(competencias)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonCompetencias)
+	_ = json.NewEncoder(w).Encode(competencias)
 }

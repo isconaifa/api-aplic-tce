@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -48,7 +49,9 @@ func (controller *LiquidacaoController) GetLiquidacoes(w http.ResponseWriter, r 
 		http.Error(w, fmt.Sprintf("Erro ao conectar ao banco: %v", err), http.StatusInternalServerError)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	liquidacaoRepository := repositories.NewLiquidacaoRepository(db)
 	liquidacoes, err := liquidacaoRepository.GetAllLiquidacao(unidadeGestoraCodigo, ano, codigoOrgao, codigoUnidadeOrcamentaria, numEmpenho)
 	if err != nil {
@@ -56,9 +59,5 @@ func (controller *LiquidacaoController) GetLiquidacoes(w http.ResponseWriter, r 
 		http.Error(w, fmt.Sprintf("Erro ao buscar liquidacoes: %v", err), http.StatusInternalServerError)
 		return
 	}
-	err = json.NewEncoder(w).Encode(liquidacoes)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Erro ao converter para JSON: %v", err), http.StatusInternalServerError)
-		return
-	}
+	_ = json.NewEncoder(w).Encode(liquidacoes)
 }

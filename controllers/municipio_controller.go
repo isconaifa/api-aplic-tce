@@ -3,7 +3,9 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -25,23 +27,17 @@ func (controller *MunicipioController) GetMunicipios(w http.ResponseWriter, r *h
 	}
 	db, err := database.Connectdb()
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		http.Error(w, fmt.Sprintf("Erro ao conectar ao banco: %v", err), http.StatusInternalServerError)
 		return
 	}
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	municipiosRepository := repositories.NewMunicipioRepository(db)
 	municipios, err := municipiosRepository.GetAllMunicipios(anoExercicio)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		http.Error(w, fmt.Sprintf("Aconteceu um erro ao buscar municipios: %v", err), http.StatusInternalServerError)
 		return
 	}
-	jsonMunicipios, err := json.Marshal(municipios)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonMunicipios)
+	_ = json.NewEncoder(w).Encode(municipios)
 }

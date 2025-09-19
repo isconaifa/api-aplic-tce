@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -35,19 +36,15 @@ func (controller *FiltroNumContratoController) GetFiltroNumContrato(w http.Respo
 		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	numContratoRepo := repositories.NewFiltroNumContratoRepository(db)
 	numContratoController, err := numContratoRepo.GetFiltroNumContrato(unidadeGestoraCodigo, ano, numContrato)
 	if err != nil {
 		http.Error(w, "Erro ao buscar ao banco", http.StatusInternalServerError)
 		return
 	}
-	jsonNumContrato, err := json.Marshal(numContratoController)
-	if err != nil {
-		http.Error(w, "Erro ao converter para JSON", http.StatusInternalServerError)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonNumContrato)
+	_ = json.NewEncoder(w).Encode(numContratoController)
 
 }

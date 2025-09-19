@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"net/http"
 )
@@ -27,12 +28,18 @@ func (controller *ConsultaEmpenhoController) GetAllConsultaEmpenhos(w http.Respo
 		return
 	}
 	db, err := database.Connectdb()
+	if err != nil {
+		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)
+		return
+	}
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	consultaEmpenhoRepository := repositories.NewConsultaEmpenhoRepository(db)
 	consultaEmpenhos, err := consultaEmpenhoRepository.GetAllConsultaEmpenhos(unidadeGestoraCodigo, ano)
-
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	json.NewEncoder(w).Encode(consultaEmpenhos)
+	_ = json.NewEncoder(w).Encode(consultaEmpenhos)
 }

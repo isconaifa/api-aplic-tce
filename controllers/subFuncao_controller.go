@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"net/http"
 	"strconv"
@@ -30,8 +31,7 @@ func (controller *SubFuncaoController) GetAllSubFuncoes(w http.ResponseWriter, r
 	}
 	codigoFuncao, err := strconv.Atoi(r.URL.Query().Get("codigoFuncao"))
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		http.Error(w, "Parâmetro 'codigoFuncao' é obrigatório", http.StatusBadRequest)
 		return
 	}
 
@@ -41,24 +41,17 @@ func (controller *SubFuncaoController) GetAllSubFuncoes(w http.ResponseWriter, r
 	}
 	db, err := database.Connectdb()
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	subFuncoesRepository := repositories.NewSubFuncaoRepository(db)
 	subFuncoes, err := subFuncoesRepository.GetAllSubFuncoes(unidadeGestoraCodigo, ano, codigoFuncao)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		http.Error(w, "Erro ao buscar Sub Função", http.StatusInternalServerError)
 		return
 	}
-	jsonSubFuncoes, err := json.Marshal(subFuncoes)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonSubFuncoes)
+	_ = json.NewEncoder(w).Encode(subFuncoes)
 }

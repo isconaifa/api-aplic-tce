@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -42,7 +43,9 @@ func (controller *FiltroGrupoFonteController) GetAllFiltroGrupoFonte(w http.Resp
 		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	filtroGrupoFonteRepository := repositories.NewFiltroGrupoFonteRepository(db)
 	filtroGrupoFontes, err := filtroGrupoFonteRepository.GetAllFiltroGrupoFonte(unidadeGestoraCodigo, ano, codigoGrupoFonte)
 	if err != nil {
@@ -50,11 +53,5 @@ func (controller *FiltroGrupoFonteController) GetAllFiltroGrupoFonte(w http.Resp
 		http.Error(w, "Erro ao buscar filtroGrupoFontes", http.StatusInternalServerError)
 		return
 	}
-	jsonFiltroGrupoFontes, err := json.Marshal(filtroGrupoFontes)
-	if err != nil {
-		http.Error(w, "Erro ao converter para JSON", http.StatusInternalServerError)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonFiltroGrupoFontes)
+	_ = json.NewEncoder(w).Encode(filtroGrupoFontes)
 }

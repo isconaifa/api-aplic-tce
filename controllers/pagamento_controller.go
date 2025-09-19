@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -38,13 +39,15 @@ func (controller *PagamentoController) GetPagamentos(w http.ResponseWriter, r *h
 		http.Error(w, fmt.Sprintf("Erro ao conectar ao banco: %v", err), http.StatusInternalServerError)
 		return
 	}
-	defer db.Close()
-	fmt.Printf("Params: unidadeGestoraCodigo=%q ano=%q numEmpenho=%q\n", unidadeGestoraCodigo, ano, numEmpenho)
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
+
 	pagamentoRepository := repositories.NewPagamentoRepository(db)
 	pagamentos, err := pagamentoRepository.GetPagamentos(unidadeGestoraCodigo, ano, numEmpenho)
 	println(pagamentos)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Erro ao buscar pagamentos: %v", err), http.StatusInternalServerError)
 	}
-	json.NewEncoder(w).Encode(pagamentos)
+	_ = json.NewEncoder(w).Encode(pagamentos)
 }

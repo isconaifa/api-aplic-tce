@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -39,7 +40,9 @@ func (controller *FiltroSubFuncaoController) GetAllFiltroSubFuncao(w http.Respon
 		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	filtroSubFuncaoRepository := repositories.NewFiltroSubFuncaoRepository(db)
 	filtroSubFuncoes, err := filtroSubFuncaoRepository.GetAllFiltroSubFuncao(unidadeGestoraCodigo, ano, codigoSubFuncao)
 	if err != nil {
@@ -47,11 +50,5 @@ func (controller *FiltroSubFuncaoController) GetAllFiltroSubFuncao(w http.Respon
 		http.Error(w, "Erro ao buscar filtroSubFuncoes", http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusOK)
-	jsonFiltroSubFuncoes, err := json.Marshal(filtroSubFuncoes)
-	if err != nil {
-		http.Error(w, "Erro ao converter para JSON", http.StatusInternalServerError)
-		return
-	}
-	w.Write(jsonFiltroSubFuncoes)
+	_ = json.NewEncoder(w).Encode(filtroSubFuncoes)
 }

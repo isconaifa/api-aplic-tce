@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -38,7 +39,9 @@ func (controller *FiltroNumLicitacoesController) GetAllFiltroNumLicitacoes(w htt
 		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	filtroNumLicitacaoRepository := repositories.NewFiltroNumLicitacaoRepository(db)
 	filtroNumLicitacoes, err := filtroNumLicitacaoRepository.GetAllFiltroNumLicitacao(unidadeGestoraCodigo, ano, numLicitacao)
 	if err != nil {
@@ -46,11 +49,5 @@ func (controller *FiltroNumLicitacoesController) GetAllFiltroNumLicitacoes(w htt
 		http.Error(w, "Erro ao buscar filtroNumLicitacoes", http.StatusInternalServerError)
 		return
 	}
-	jsonFiltroNumLicitacoes, err := json.Marshal(filtroNumLicitacoes)
-	if err != nil {
-		http.Error(w, "Erro ao converter para JSON", http.StatusInternalServerError)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonFiltroNumLicitacoes)
+	_ = json.NewEncoder(w).Encode(filtroNumLicitacoes)
 }

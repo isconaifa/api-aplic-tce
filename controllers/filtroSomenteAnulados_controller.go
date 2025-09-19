@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -43,7 +44,9 @@ func (controller *FiltroSomenteAnuladosController) GetAllFiltroSomenteAnulados(w
 		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	filtroSomenteAnuladosRepository := repositories.NewFiltroSomenteAnuladosRepository(db)
 	filtroSomenteAnulados, err := filtroSomenteAnuladosRepository.GetAllFiltroSomenteAnulados(unidadeGestoraCodigo, ano, dataInicioStr, dataFimStr)
 	if err != nil {
@@ -51,11 +54,5 @@ func (controller *FiltroSomenteAnuladosController) GetAllFiltroSomenteAnulados(w
 		http.Error(w, fmt.Sprintf("Erro ao buscar filtroSomenteAnulados: %v", err), http.StatusInternalServerError)
 		return
 	}
-	jsonFiltroSomenteAnulados, err := json.Marshal(filtroSomenteAnulados)
-	if err != nil {
-		http.Error(w, "Erro ao converter para JSON", http.StatusInternalServerError)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonFiltroSomenteAnulados)
+	_ = json.NewEncoder(w).Encode(filtroSomenteAnulados)
 }

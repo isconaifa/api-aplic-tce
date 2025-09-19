@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"net/http"
 )
@@ -38,18 +39,14 @@ func (controller *FiltroDotacaoController) ObterFiltroDotacao(w http.ResponseWri
 		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	filtroDotacaoRepository := repositories.NewFiltroDotacaoRepository(db)
 	filtroDotacao, err := filtroDotacaoRepository.ObterFiltroDotacao(unidadeGestoraCodigo, ano, dotacao)
 	if err != nil {
 		http.Error(w, "Erro ao buscar filtroDotacao", http.StatusInternalServerError)
 		return
 	}
-	filtrodotacaoJson, err := json.Marshal(filtroDotacao)
-	if err != nil {
-		http.Error(w, "Erro ao converter para JSON", http.StatusInternalServerError)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(filtrodotacaoJson)
+	_ = json.NewEncoder(w).Encode(filtroDotacao)
 }

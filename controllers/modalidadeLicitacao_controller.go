@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -23,13 +24,14 @@ func (controller *ModalidadeLicitacaoController) GetAllModalidadeLicitacao(w htt
 		http.Error(w, fmt.Sprintf("Erro ao conectar ao banco: %v", err), http.StatusInternalServerError)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	modalidadeLicitacaoRepository := repositories.NewModalidadeLicitacaoRepository(db)
 	modalidadeLicitacao, err := modalidadeLicitacaoRepository.GetAllModalidadeLicitacao()
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Erro ao buscar modalidadeLicitacao: %v", err), http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(modalidadeLicitacao)
+	_ = json.NewEncoder(w).Encode(modalidadeLicitacao)
 }

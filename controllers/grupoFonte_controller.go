@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"net/http"
 )
@@ -27,25 +28,14 @@ func (controller *GrupoFonteController) GetAllGruposFonte(w http.ResponseWriter,
 		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	gruposFonteRepository := repositories.NewGrupoFonteRepository(db)
 	gruposFonte, err := gruposFonteRepository.GetAllGruposFonte(ano)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		http.Error(w, "Erro ao buscar gruposFonte", http.StatusInternalServerError)
 		return
 	}
-	jsonGruposFonte, err := json.Marshal(gruposFonte)
-	if err != nil {
-		http.Error(w, "Erro ao converter para JSON", http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonGruposFonte)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
+	_ = json.NewEncoder(w).Encode(gruposFonte)
 }

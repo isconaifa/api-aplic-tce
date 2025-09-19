@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"net/http"
 )
@@ -19,23 +20,17 @@ func (controller *TipoDeCargaController) GetTiposDeCargas(w http.ResponseWriter,
 	w.Header().Set("Content-Type", "application/json")
 	db, err := database.Connectdb()
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)
 		return
 	}
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	tiposDeCargasRepository := repositories.NewTipoDeCargaRepository(db)
 	tiposDeCargas, err := tiposDeCargasRepository.GetAllTiposDeCarga()
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		http.Error(w, "Erro ao buscar Tipos de Carga", http.StatusInternalServerError)
 		return
 	}
-	jsonTiposDeCargas, err := json.Marshal(tiposDeCargas)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonTiposDeCargas)
+	_ = json.NewEncoder(w).Encode(tiposDeCargas)
 }

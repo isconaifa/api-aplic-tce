@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -46,11 +47,8 @@ func (controller *FiltroAcaoController) GetAllFiltroAcao(w http.ResponseWriter, 
 		http.Error(w, "Erro ao buscar filtroAcaos", http.StatusInternalServerError)
 		return
 	}
-	jsonFiltroAcaos, err := json.Marshal(filtroAcaos)
-	if err != nil {
-		http.Error(w, "Erro ao converter para JSON", http.StatusInternalServerError)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonFiltroAcaos)
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
+	_ = json.NewEncoder(w).Encode(filtroAcaos)
 }

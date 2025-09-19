@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"net/http"
 )
@@ -32,18 +33,14 @@ func (controller *OrgaoController) GetAllOrgaos(w http.ResponseWriter, r *http.R
 		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	orgaoRepository := repositories.NewOrgaoRepository(db)
 	orgaos, err := orgaoRepository.GetAllOrgaos(unidadeGestoraCodigo, ano)
 	if err != nil {
 		http.Error(w, "Erro ao buscar orgaos", http.StatusInternalServerError)
 		return
 	}
-	jsonOrgaos, err := json.Marshal(orgaos)
-	if err != nil {
-		http.Error(w, "Erro ao converter para JSON", http.StatusInternalServerError)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonOrgaos)
+	_ = json.NewEncoder(w).Encode(orgaos)
 }

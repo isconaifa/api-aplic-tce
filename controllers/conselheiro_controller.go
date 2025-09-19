@@ -3,7 +3,9 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 )
@@ -20,32 +22,22 @@ func (controller *ConselheiroController) GetConselheiros(w http.ResponseWriter, 
 	w.Header().Set("Content-Type", "application/json")
 	db, err := database.Connectdb()
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		http.Error(w, fmt.Sprintf("ocorreu um erro ao buscar conselheiro %v:", err), http.StatusInternalServerError)
 		return
 	}
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	conselheirosRepository := repositories.NewConselheiroRepository(db)
 	exercicio, err := strconv.Atoi(r.URL.Query().Get("exercicio"))
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		http.Error(w, fmt.Sprintf("ocorreu um erro ao buscar conselheiro %v:", err), http.StatusBadRequest)
 		return
 	}
 	conselheiros, err := conselheirosRepository.GetAllConselheiros(exercicio)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		http.Error(w, fmt.Sprintf("Erro ao buscar conselheiro %v:", err), http.StatusInternalServerError)
 		return
 	}
-
-	jsonConselheiros, err := json.Marshal(conselheiros)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonConselheiros)
-
+	_ = json.NewEncoder(w).Encode(conselheiros)
 }

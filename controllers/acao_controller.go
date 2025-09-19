@@ -3,7 +3,9 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -29,24 +31,15 @@ func (acaoController *AcaoController) GetAllAcoes(w http.ResponseWriter, r *http
 	}
 	db, err := database.Connectdb()
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
+		http.Error(w, fmt.Sprintf("Erro ao conectar ao banco: %v", err), http.StatusInternalServerError)
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	acoesRepository := repositories.NewAcaoRepository(db)
 	acoes, err := acoesRepository.GetAllAcoes(unidadeGestoraCodigo, ano)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
+		http.Error(w, fmt.Sprintf("Erro ao buscar ações: %v", err), http.StatusInternalServerError)
 	}
-	jsonAcoes, err := json.Marshal(acoes)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonAcoes)
+	_ = json.NewEncoder(w).Encode(acoes)
 }

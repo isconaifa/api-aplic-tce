@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"net/http"
 )
@@ -30,23 +31,17 @@ func (controller *FonteDestinacaoRecursoController) GetFontesDestinacaoRecurso(w
 	}
 	db, err := database.Connectdb()
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)
 		return
 	}
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	fontesDestinacaoRecursoRepository := repositories.NewFonteDestinacaoRecursoRepository(db)
 	fontesDestinacaoRecurso, err := fontesDestinacaoRecursoRepository.GetAllFontesDestinacaoRecurso(unidadeGestoraCodigo, ano)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		http.Error(w, "Erro ao buscar fontesDestinacaoRecurso", http.StatusInternalServerError)
 		return
 	}
-	jsonFontesDestinacaoRecurso, err := json.Marshal(fontesDestinacaoRecurso)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonFontesDestinacaoRecurso)
+	_ = json.NewEncoder(w).Encode(fontesDestinacaoRecurso)
 }

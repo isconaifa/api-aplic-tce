@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"net/http"
 )
@@ -29,23 +30,17 @@ func (controller *FuncaoController) GetFuncoes(w http.ResponseWriter, r *http.Re
 	}
 	db, err := database.Connectdb()
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)
 		return
 	}
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	funcoesRepository := repositories.NewFuncaoRepository(db)
 	funcoes, err := funcoesRepository.GetAllFuncoes(unidadeGestoraCodigo, ano)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		http.Error(w, "Erro ao buscar funcoes", http.StatusInternalServerError)
 		return
 	}
-	jsonFuncoes, err := json.Marshal(funcoes)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonFuncoes)
+	_ = json.NewEncoder(w).Encode(funcoes)
 }

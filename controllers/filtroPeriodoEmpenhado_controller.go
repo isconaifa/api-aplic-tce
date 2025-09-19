@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -47,7 +48,9 @@ func (controller *FiltroPeriodoEmpenhadoController) GetAllFiltroPeriodoEmpenhado
 		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	filtroPeriodoEmpenhadoRepository := repositories.NewFiltroPeriodoEmpenhadoRepository(db)
 	filtroPeriodoEmpenhados, err := filtroPeriodoEmpenhadoRepository.GetAllFiltroPeriodoEmpenhado(unidadeGestoraCodigo, ano, dataInicioStr, dataFimStr)
 	if err != nil {
@@ -55,11 +58,5 @@ func (controller *FiltroPeriodoEmpenhadoController) GetAllFiltroPeriodoEmpenhado
 		http.Error(w, "Erro ao buscar filtroPeriodoEmpenhados", http.StatusInternalServerError)
 		return
 	}
-	jsonfilterPeriodoEmpenhados, err := json.Marshal(filtroPeriodoEmpenhados)
-	if err != nil {
-		http.Error(w, "Erro ao converter filtroPeriodoEmpenhados para JSON", http.StatusInternalServerError)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonfilterPeriodoEmpenhados)
+	_ = json.NewEncoder(w).Encode(filtroPeriodoEmpenhados)
 }

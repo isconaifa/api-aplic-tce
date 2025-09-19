@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"net/http"
 )
@@ -38,7 +39,9 @@ func (controller *UnidadeGestoraController) GetUnidadesGestoras(w http.ResponseW
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 
 	// Chama o repositório passando munCodigo e ano
 	unidadesGestorasRepository := repositories.NewUnidadeGestoraRepository(db)
@@ -47,14 +50,5 @@ func (controller *UnidadeGestoraController) GetUnidadesGestoras(w http.ResponseW
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	// Serializa para JSON e retorna
-	jsonUnidadesGestoras, err := json.Marshal(unidadesGestoras)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonUnidadesGestoras)
+	_ = json.NewEncoder(w).Encode(unidadesGestoras)
 }

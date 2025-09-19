@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -51,7 +52,9 @@ func (controller *FiltroProgramaController) GetAllProgramas(w http.ResponseWrite
 		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	filtroProgramaRepository := repositories.NewFiltroProgramaRepository(db)
 	filtroProgramas, err := filtroProgramaRepository.GetAllProgramas(unidadeGestoraCodigo, ano, codigoPrograma, codigoGrupoFonte)
 	if err != nil {
@@ -59,12 +62,6 @@ func (controller *FiltroProgramaController) GetAllProgramas(w http.ResponseWrite
 		http.Error(w, "Erro ao buscar programas", http.StatusInternalServerError)
 		return
 	}
-	jsonFiltroProgramas, err := json.Marshal(filtroProgramas)
-	if err != nil {
-		http.Error(w, "Erro ao converter para JSON", http.StatusInternalServerError)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonFiltroProgramas)
+	_ = json.NewEncoder(w).Encode(filtroProgramas)
 
 }

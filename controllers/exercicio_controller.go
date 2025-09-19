@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"net/http"
 )
@@ -23,6 +24,9 @@ func (controller *ExercicioController) GetExercicios(w http.ResponseWriter, r *h
 		w.Write([]byte(err.Error()))
 		return
 	}
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	exerciciosRepository := repositories.NewExercicioRepository(db)
 	exercicios, err := exerciciosRepository.GetAllExercicios()
 	if err != nil {
@@ -30,12 +34,5 @@ func (controller *ExercicioController) GetExercicios(w http.ResponseWriter, r *h
 		w.Write([]byte(err.Error()))
 		return
 	}
-	jsonExercicios, err := json.Marshal(exercicios)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonExercicios)
+	_ = json.NewEncoder(w).Encode(exercicios)
 }

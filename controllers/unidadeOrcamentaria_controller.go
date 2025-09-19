@@ -3,7 +3,9 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -35,23 +37,17 @@ func (controller *UnidadeOrcamentariaController) GetAllUnidadeOrcamentaria(w htt
 	db, err := database.Connectdb()
 	if err != nil {
 		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	unidadeOrcamentariaRepository := repositories.NewUnidadeOrcamentariaRepository(db)
 	unidadeOrcamentaria, err := unidadeOrcamentariaRepository.GetAllUnidadeOrcamentaria(unidadeGestoraCodigo, ano, codigoOrgao)
 	if err != nil {
-		http.Error(w, "Erro ao buscar Unidade Orcamentaria", http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		http.Error(w, fmt.Sprintf("Erro ao buscar unidade Orçamentária %v:", err), http.StatusInternalServerError)
 		return
 	}
-	jsonUnidadeOrcamentaria, err := json.Marshal(unidadeOrcamentaria)
-	if err != nil {
-		http.Error(w, "Erro ao converter para JSON", http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonUnidadeOrcamentaria)
+	_ = json.NewEncoder(w).Encode(unidadeOrcamentaria)
 }

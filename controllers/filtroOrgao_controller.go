@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-aplic-web/database"
 	"api-aplic-web/repositories"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -38,7 +39,9 @@ func (controller *FiltroOrgaoController) GetAllFiltroOrgao(w http.ResponseWriter
 		http.Error(w, "Erro ao conectar ao banco", http.StatusInternalServerError)
 		return
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
 	filtroOrgaoRepository := repositories.NewFiltroOrgaoRepository(db)
 	filtroOrgaos, err := filtroOrgaoRepository.GetAllFiltroOrgao(unidadeGestoraCodigo, ano, codigoOrgao)
 	if err != nil {
@@ -46,11 +49,5 @@ func (controller *FiltroOrgaoController) GetAllFiltroOrgao(w http.ResponseWriter
 		http.Error(w, "Erro ao buscar filtroOrgaos", http.StatusInternalServerError)
 		return
 	}
-	jsonFiltroOrgaos, err := json.Marshal(filtroOrgaos)
-	if err != nil {
-		http.Error(w, "Erro ao converter para JSON", http.StatusInternalServerError)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonFiltroOrgaos)
+	_ = json.NewEncoder(w).Encode(filtroOrgaos)
 }
