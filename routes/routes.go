@@ -173,6 +173,18 @@ func SetupRoutes() (*mux.Router, error) {
 	pagamentoRepository := repositories.NewPagamentoRepository(db)
 	pagamentoController := controllers.NewPagamentoController(pagamentoRepository)
 
+	// request de adiantamentos
+	adiantamentoRepository := repositories.NewAdiantamentoRepository(db)
+	adiantamentoController := controllers.NewAdiantamentoController(adiantamentoRepository)
+
+	// request de folha de pagamento
+	folhaPagamentoRepository := repositories.NewFolhaPagamentoRepository(db)
+	folhaPagamentoController := controllers.NewFolhaPagamentoController(folhaPagamentoRepository)
+
+	// request de folha de pagamento parametrizada
+	folhaPagamentoParametrizadaRepository := repositories.NewFolhaPagamentoParametrizadaRepository(db)
+	folhaPagamentoParametrizadaController := controllers.NewFolhaPagamentoParametrizadaController(folhaPagamentoParametrizadaRepository)
+
 	r := mux.NewRouter()
 	r.HandleFunc("/aplic/exercicios", excontroller.GetExercicios).Methods("GET")
 	r.HandleFunc("/aplic/competencias", competcontroller.GetCompetencias).Methods("GET")
@@ -214,5 +226,8 @@ func SetupRoutes() (*mux.Router, error) {
 	r.HandleFunc("/aplic/filtroNumConcurso", filtroNumConcursoController.GetFiltroNumConcurso).Methods("GET")
 	r.HandleFunc("/aplic/liquidacoes", liquidacaoController.GetLiquidacoes).Methods("GET")
 	r.HandleFunc("/aplic/pagamentos", pagamentoController.GetPagamentos).Methods("GET")
+	r.HandleFunc("/aplic/adiantamentos", adiantamentoController.GetAdiantamento).Methods("GET")
+	r.HandleFunc("/aplic/folha-pagamento", folhaPagamentoController.GetFolhaPagamento).Methods("GET")
+	r.HandleFunc("/aplic/folha-pagamento-parametrizada", folhaPagamentoParametrizadaController.GetFolhaPagamentoParametrizada).Methods("GET")
 	return r, nil
 }
