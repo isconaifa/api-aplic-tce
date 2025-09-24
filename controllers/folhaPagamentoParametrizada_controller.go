@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 )
 
@@ -30,30 +31,25 @@ func (controller *FolhaPagamentoParametrizadaController) GetFolhaPagamentoParame
 		return
 	}
 	codigoOrgao := r.URL.Query().Get("codigoOrgao")
-	if codigoOrgao == "" {
-		http.Error(w, "Parâmetro 'codigoOrgao' é obrigatório", http.StatusBadRequest)
-		return
-	}
 	codigoUnidadeOrcamentaria := r.URL.Query().Get("codigoUnidadeOrcamentaria")
-	if codigoUnidadeOrcamentaria == "" {
-		http.Error(w, "Parâmetro 'codigoUnidadeOrcamentaria' é obrigatório", http.StatusBadRequest)
-		return
-	}
 	mesReferencia := r.URL.Query().Get("mesReferencia")
-	if mesReferencia == "" {
-		http.Error(w, "Parâmetro 'mesReferencia' é obrigatório", http.StatusBadRequest)
-	}
+
 	db, err := database.Connectdb()
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Erro ao conectar ao banco: %v", err), http.StatusInternalServerError)
+		return
 	}
 	defer func(db *sql.DB) {
 		_ = db.Close()
 	}(db)
-	folhaPagamentoParametrizadaRepository := repositories.NewFolhaPagamentoParametrizadaRepository(db)
-	folhaPagamentoParametrizadas, err := folhaPagamentoParametrizadaRepository.GetFolhaPagamentoParametrizada(unidadeGestoraCodigo, ano, codigoOrgao, codigoUnidadeOrcamentaria, mesReferencia)
+	folhasPagamentoRepository := repositories.NewFolhaPagamentoParametrizadaRepository(db)
+	folhaPagamento, err := folhasPagamentoRepository.GetFolhaPagamentoParametrizada(unidadeGestoraCodigo, ano, codigoOrgao, codigoUnidadeOrcamentaria, mesReferencia)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Erro ao buscar folhaPagamentoParametrizadas: %v", err), http.StatusInternalServerError)
+		http.Error(w, "Erro ao processar sua solicitação", http.StatusInternalServerError)
+		return
 	}
-	_ = json.NewEncoder(w).Encode(folhaPagamentoParametrizadas)
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(folhaPagamento); err != nil {
+		log.Printf("Erro ao escrever a resposta JSON: %v", err)
+	}
 }

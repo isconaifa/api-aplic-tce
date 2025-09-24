@@ -185,9 +185,13 @@ func SetupRoutes() (*mux.Router, error) {
 	folhaPagamentoParametrizadaRepository := repositories.NewFolhaPagamentoParametrizadaRepository(db)
 	folhaPagamentoParametrizadaController := controllers.NewFolhaPagamentoParametrizadaController(folhaPagamentoParametrizadaRepository)
 
+	// request de meses
+	mesesRepository := repositories.NewMesRepository(db)
+	mesesController := controllers.NewMesesController(mesesRepository)
 	r := mux.NewRouter()
 	r.HandleFunc("/aplic/exercicios", excontroller.GetExercicios).Methods("GET")
 	r.HandleFunc("/aplic/competencias", competcontroller.GetCompetencias).Methods("GET")
+	r.HandleFunc("/aplic/meses", mesesController.GetMeses).Methods("GET")
 	r.HandleFunc("/aplic/tipos-de-carga", tiposDeCargasController.GetTiposDeCargas).Methods("GET")
 	r.HandleFunc("/aplic/conselheiros", conseelController.GetConselheiros).Methods("GET")
 	r.HandleFunc("/aplic/municipios", municipiosController.GetMunicipios).Methods("GET")
