@@ -1,6 +1,6 @@
 package models
 
 type Meses struct {
-	Descricao     string `json:"mes_codigo"`
-	MesReferencia string `json:"mes"`
+	MesReferencia string `json:"mes_referencia" db:"mes_referencia"`
+	Descricao     string `json:"descricao" db:"descricao"`
 }

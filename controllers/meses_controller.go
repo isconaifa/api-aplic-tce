@@ -5,7 +5,6 @@ import (
 	"api-aplic-web/repositories"
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
@@ -29,7 +28,7 @@ func (controller *MesesController) GetMeses(w http.ResponseWriter, r *http.Reque
 	}(db)
 	mesesRepository := repositories.NewMesRepository(db)
 	meses, err := mesesRepository.GetMeses()
-	fmt.Println(meses)
+	//fmt.Println(meses)
 	if err != nil {
 		http.Error(w, "Erro ao buscar meses", http.StatusInternalServerError)
 		return
