@@ -188,6 +188,10 @@ func SetupRoutes() (*mux.Router, error) {
 	// request de meses
 	mesesRepository := repositories.NewMesRepository(db)
 	mesesController := controllers.NewMesesController(mesesRepository)
+
+	// request de servidores
+	servidorRepository := repositories.NewServidorRepository(db)
+	servidorController := controllers.NewServidorController(servidorRepository)
 	r := mux.NewRouter()
 	r.HandleFunc("/aplic/exercicios", excontroller.GetExercicios).Methods("GET")
 	r.HandleFunc("/aplic/competencias", competcontroller.GetCompetencias).Methods("GET")
@@ -233,5 +237,6 @@ func SetupRoutes() (*mux.Router, error) {
 	r.HandleFunc("/aplic/adiantamentos", adiantamentoController.GetAdiantamento).Methods("GET")
 	r.HandleFunc("/aplic/folha-pagamento", folhaPagamentoController.GetFolhaPagamento).Methods("GET")
 	r.HandleFunc("/aplic/folha-pagamento-parametrizada", folhaPagamentoParametrizadaController.GetFolhaPagamentoParametrizada).Methods("GET")
+	r.HandleFunc("/aplic/servidores", servidorController.GetServidores).Methods("GET")
 	return r, nil
 }
