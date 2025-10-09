@@ -14,7 +14,11 @@ func NewMesRepository(db *sql.DB) *MesRepository {
 	return &MesRepository{db: db}
 }
 func (repository *MesRepository) GetMeses() ([]models.Meses, error) {
-	rows, err := repository.db.Query(queries.MesQuery)
+	query, err := queries.Load("Mes.sql")
+	if err != nil {
+		return nil, err
+	}
+	rows, err := repository.db.Query(query)
 	if err != nil {
 		return nil, err
 	}

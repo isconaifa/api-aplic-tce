@@ -1,6 +1,18 @@
 package queries
 
-// Query para modalidade de licitação
-const ModalidadeLicitacaoQuery = "select T.MLIC_CODIGO, T.MLIC_DESCRICAO\n  from APLIC2008.MODALIDADE_LICITACAO T\n"
+import (
+	"embed"
+	"fmt"
+)
 
-// Query para filtro de numero de contrato
+//go:embed *.sql
+var SQLFiles embed.FS
+
+// Load lê uma query pelo nome do arquivo dentro do embed.FS
+func Load(filename string) (string, error) {
+	data, err := SQLFiles.ReadFile(filename)
+	if err != nil {
+		return "", fmt.Errorf("erro ao ler SQL %s: %w", filename, err)
+	}
+	return string(data), nil
+}
